@@ -1,32 +1,43 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+    <div id="app">
+        <SideBar/>
+        <router-view></router-view>
     </div>
-    <router-view/>
-  </div>
 </template>
+<script>
+    import SideBar from '@/components/SideBar.vue';
 
-<style lang="less">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+    export default {
+        components: {SideBar}
     }
-  }
-}
+
+</script>
+<style lang="less">
+    @import '//at.alicdn.com/t/font_496303_kqrjhri8l25d0a4i.css';
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    a{
+        text-decoration: none;
+        color:#444;
+    }
+    ul,ol{
+        list-style:none;
+    }
+    html,body,#app{
+        height: 100%;
+    }
+    body{
+        font-family: 'Avenir',Helvetica,Arial,sans-serif;
+        font-size: 14px;
+        -moz-osx-font-smoothing: grayscale;
+        background-color:#eee;
+    }
+    #app{
+        display:flex;
+        align-items: stretch;
+    }
 </style>
