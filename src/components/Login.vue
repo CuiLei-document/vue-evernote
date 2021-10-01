@@ -10,7 +10,7 @@
                             <div class="register" v-show="isShowRegister">
                                 <label>
                                     <input type="text" v-model="register.username" placeholder="请输入用户名">
-                                    <input type="password" placeholder="请输入密码" v-model="register.password" >
+                                    <input type="password" placeholder="请输入密码" v-model="register.password">
                                 </label>
                                 <p :class="{error: register.isError}">{{register.notice}}</p>
                                 <div class="button" @click="onRegister">创建账号</div>
@@ -33,82 +33,90 @@
 </template>
 
 <script>
+    import {request} from '../servies/request'
+    import auth from '../servies/network/api.js'
     export default {
         name: "Login",
-        data(){
-            return{
+        data() {
+            return {
                 isShowRegister: true,
-                isShowLogin:false,
-                register:{
-                    username:'',
-                    password:'',
-                    notice:'请输入用户名和密码',
-                    isError:false
+                isShowLogin: false,
+                register: {
+                    username: '',
+                    password: '',
+                    notice: '请输入用户名和密码',
+                    isError: false
                 },
-                login:{
-                    username:'',
-                    password:'',
-                    notice:'请输入用户名和密码',
-                    isError:false
+                login: {
+                    username: '',
+                    password: '',
+                    notice: '请输入用户名和密码',
+                    isError: false
                 }
             }
         },
-        methods:{
+        methods: {
             // 切换注册
-            showRegister(){
+            showRegister() {
                 this.isShowRegister = true
                 this.isShowLogin = false
             },
             // 切换登录
-            showLogin(){
+            showLogin() {
                 this.isShowRegister = false
                 this.isShowLogin = true
             },
             // 注册效验
-            onRegister(){
+            onRegister() {
                 let result1 = this.validUsername(this.register.username)
-                if(!result1.isValid){
+                if (!result1.isValid) {
                     this.register.notice = result1.notice
                     this.register.isError = true
                     return
                 }
                 let result2 = this.validPassword(this.register.password)
-                if(!result2.isValid){
+                if (!result2.isValid) {
                     this.register.notice = result2.notice
                     this.register.isError = true
                     return
                 }
                 this.register.iserror = false
                 this.register.notice = ''
-                console.log('用户名：',this.register.username,'密码:',this.register.password)
+                console.log('用户名：', this.register.username, '密码:', this.register.password)
+                auth.register(this.register.username,this.register.password).then(res=>{
+                    console.log(res)
+                })
             },
-            onLogin(){
+            onLogin() {
                 let result1 = this.validUsername(this.login.username)
-                if(!result1.isValid){
+                if (!result1.isValid) {
                     this.login.notice = result1.notice
                     this.login.isError = true
                     return
                 }
                 let result2 = this.validPassword(this.login.password)
-                if(!result2.isValid){
+                if (!result2.isValid) {
                     this.login.notice = result2.notice
                     this.login.isError = true
                     return
                 }
                 this.login.iserror = false
                 this.login.notice = ''
-                console.log('用户名：',this.login.username,'密码:',this.login.password)
+                console.log('用户名：', this.login.username, '密码:', this.login.password)
+                auth.login(this.login.username,this.login.password).then(res=>{
+                    console.log(res)
+                })
             },
-            validUsername(username){
-                return{
-                    isValid:/^[a-zA-Z_0-9]{6,15}$/.test(username),
-                    notice:'请检查您的用户名，6~15个字符，可以是字母、下划线、数字'
+            validUsername(username) {
+                return {
+                    isValid: /^[a-zA-Z_0-9]{3,15}$/.test(username),
+                    notice: '请检查您的用户名，6~15个字符，可以是字母、下划线、数字'
                 }
             },
-            validPassword(password){
+            validPassword(password) {
                 return {
-                    isValid:/^[1-9]{6,10}$/.test(password),
-                    notice:'请检查您的密码，1-9的数字，6~10位'
+                    isValid: /^[1-9]{6,10}$/.test(password),
+                    notice: '请检查您的密码，1-9的数字，6~10位'
                 }
             }
         }
@@ -119,69 +127,79 @@
     .fade-enter-active, .fade-leave-active {
         transition: all .6s;
     }
+
     .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
         margin-top: -192px;
-        opacity:0;
+        opacity: 0;
     }
-    .modal-mask{
+
+    .modal-mask {
         position: fixed;
-        z-index:10;
-        top:0;
-        left:0;
+        z-index: 10;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        background-color:rgba(0,0,0,.5);
-        display:table;
+        background-color: rgba(0, 0, 0, .5);
+        display: table;
         transition: opacity .3s ease;
-        .modal-wrapper{
-            display:table-cell;
+
+        .modal-wrapper {
+            display: table-cell;
             vertical-align: middle;
-            .modal-container{
+
+            .modal-container {
                 width: 800px;
                 height: 500px;
                 margin: 0 auto;
-                background-color:#fff;
+                background-color: #fff;
                 border-radius: 4px;
-                box-shadow: 0 2px 8px rgba(0,0,0,.4);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, .4);
                 transition: all .3s ease;
-                font-family: Helvetica,Arial,sans-serif;
-                display:flex;
-                .main{
-                    flex:1;
-                    background: #36bc64 url("//cloud.hunger-valley.com/17-12-13/38476998.jpg-middle") center center no-repeat;
+                font-family: Helvetica, Arial, sans-serif;
+                display: flex;
+
+                .main {
+                    flex: 1;
+                    background: #36bc64 url("../assets/notebg.jpg") center center no-repeat;
                     background-size: contain;
                 }
-                .form{
+
+                .form {
                     width: 270px;
                     border-left: 1px solid #ccc;
-                    h3{
+
+                    h3 {
                         padding: 10px 20px;
                         font-weight: normal;
                         font-size: 16px;
-                        border-top: 1px solid #eee;
+                        /*border-top: 1px solid #eee;*/
                         cursor: pointer;
-                        &:nth-of-type(2){
+
+                        &:nth-of-type(2) {
                             border-bottom: 1px solid #eee;
                         }
                     }
-                    .button{
+
+                    .button {
                         background-color: #2bb964;
                         height: 36px;
                         line-height: 36px;
                         text-align: center;
                         font-weight: bold;
-                        color:#fff;
+                        color: #fff;
                         border-radius: 4px;
                         margin-top: 18px;
                         cursor: pointer;
                     }
-                    .login,.register{
-                        height:192px;
+
+                    .login, .register {
+                        height: 192px;
                         padding: 10px 20px;
                         border-bottom: 1px solid #eee;
 
-                        input{
-                            display:block;
+                        input {
+                            display: block;
                             width: 100%;
                             height: 35px;
                             line-height: 35px;
@@ -191,21 +209,25 @@
                             outline: none;
                             font-size: 14px;
                             margin-top: 10px;
-                            &:focus{
+
+                            &:focus {
                                 border: 3px solid #9dcaf8;
                             }
                         }
-                        p{
+
+                        p {
                             font-size: 12px;
                             margin-top: 10px;
-                            color:#444;
+                            color: #444;
                         }
-                        .error{
-                            color:red;
+
+                        .error {
+                            color: red;
                         }
                     }
-                    .login{
-                        border-top:0;
+
+                    .login {
+                        border-top: 0;
                     }
                 }
             }
