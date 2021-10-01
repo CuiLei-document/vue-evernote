@@ -1,18 +1,38 @@
 <template>
-    <span :title="user.name">{{slug}}</span>
+    <span :title="username">{{slug}}</span>
 </template>
 
 <script>
+    import api from '@/servies/network/api.js'
+
     export default {
         name: "Avatar",
         data() {
             return {
-                user: {
-                    name: 'h'
-                },
-                slug: 'h'
+                username: '未登录',
             }
-        }
+        },
+        computed: {
+            slug() {
+                return this.username[0].toUpperCase()
+            }
+        },
+        created() {
+            // this.$eventBus.$on('userInfo', name => {
+            //     console.log(1111111)
+            //     console.log(name)
+            //     this.username = name
+            // })
+            this.$eventBus.$on('userInfo',msg=>{
+                this.username = msg
+            })
+            api.getInfo().then(res => {
+                if (res.isLogin) {
+                    this.username = res.data.username
+                }
+                console.log(res);
+            })
+        },
     }
 </script>
 

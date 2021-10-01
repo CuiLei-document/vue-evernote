@@ -5,8 +5,16 @@
 </template>
 
 <script>
+    import auth from '@/servies/network/api.js'
     export default {
-        name: "TrashDetail"
+        name: "TrashDetail",
+        created(){
+            auth.getInfo().then(res=>{
+                if(!res.isLogin){
+                    this.$router.push('/login')
+                }
+            })
+        }
     }
 </script>
 

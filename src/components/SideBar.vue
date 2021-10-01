@@ -1,6 +1,6 @@
 <template>
     <div class="sidebar">
-        <Avatar />
+        <Avatar  />
         <div class="icons">
             <router-link to="/note/1" title="笔记"><i class="iconfont icon-note"></i></router-link>
             <router-link to="/notebooks" title="笔记本"><i class="iconfont icon-notebook"></i></router-link>
@@ -14,14 +14,16 @@
 
 <script>
     import Avatar from './Avatar.vue'
-    import {request} from '../servies/request'
+    import auth from '@/servies/network/api'
     export default {
         components:{Avatar},
         name: "SideBar",
         methods:{
             logout(){
-                request('/auth/logout').then(res=>{
-                    console.log(res)
+                auth.logout('/auth/logout').then(res=>{
+                    if(res.msg === '注销成功'){
+                        this.$router.push({path:'/login'})
+                    }
                 })
             }
         }

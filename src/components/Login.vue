@@ -80,10 +80,14 @@
                     this.register.isError = true
                     return
                 }
-                this.register.iserror = false
-                this.register.notice = ''
-                console.log('用户名：', this.register.username, '密码:', this.register.password)
+
                 auth.register(this.register.username,this.register.password).then(res=>{
+                    if(res.msg === '创建成功'){
+                        this.register.iserror = false
+                        this.register.notice = ''
+
+                        this.$router.push({path:'/notebooks'})
+                    }
                     console.log(res)
                 })
             },
@@ -100,10 +104,14 @@
                     this.login.isError = true
                     return
                 }
-                this.login.iserror = false
-                this.login.notice = ''
-                console.log('用户名：', this.login.username, '密码:', this.login.password)
                 auth.login(this.login.username,this.login.password).then(res=>{
+                    if(res.msg === '登录成功'){
+                        this.login.iserror = false
+                        this.login.notice = ''
+                        this.$eventBus.$emit('userInfo',this.login.username)
+                        this.$router.push({path:'/notebooks'})
+                    }
+
                     console.log(res)
                 })
             },
