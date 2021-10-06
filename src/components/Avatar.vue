@@ -4,34 +4,24 @@
 
 <script>
     import api from '@/servies/network/api.js'
+    import {mapGetters,mapActions} from 'vuex'
 
     export default {
         name: "Avatar",
         data() {
-            return {
-                username: '未登录',
-            }
+            return {}
         },
         computed: {
-            slug() {
-                return this.username[0].toUpperCase()
-            }
+            ...mapGetters([
+                'username',
+                'slug'
+            ])
+        },
+        methods:{
+            ...mapActions(['checkUser'])
         },
         created() {
-            // this.$eventBus.$on('userInfo', name => {
-            //     console.log(1111111)
-            //     console.log(name)
-            //     this.username = name
-            // })
-            this.$eventBus.$on('userInfo',msg=>{
-                this.username = msg
-            })
-            api.getInfo().then(res => {
-                if (res.isLogin) {
-                    this.username = res.data.username
-                }
-                console.log(res);
-            })
+            this.checkUser('/login')
         },
     }
 </script>

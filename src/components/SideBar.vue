@@ -2,9 +2,9 @@
     <div class="sidebar">
         <Avatar  />
         <div class="icons">
-            <router-link to="/note/1" title="笔记"><i class="iconfont icon-note"></i></router-link>
+            <router-link to="/note" title="笔记"><i class="iconfont icon-note"></i></router-link>
             <router-link to="/notebooks" title="笔记本"><i class="iconfont icon-notebook"></i></router-link>
-            <router-link to="/trash/2" title="回收站"><i class="iconfont icon-trash"></i></router-link>
+            <router-link to="/trash" title="回收站"><i class="iconfont icon-trash"></i></router-link>
         </div>
         <div class="logout">
             <i class="iconfont icon-logout" @click="logout"></i>
@@ -14,16 +14,15 @@
 
 <script>
     import Avatar from './Avatar.vue'
-    import auth from '@/servies/network/api'
     export default {
         components:{Avatar},
         name: "SideBar",
         methods:{
             logout(){
-                auth.logout('/auth/logout').then(res=>{
-                    if(res.msg === '注销成功'){
-                        this.$router.push({path:'/login'})
-                    }
+                console.log(1111)
+                this.$store.dispatch('logoutUser').then(()=>{
+                    this.$router.push('/login')
+                    this.$message.success('注销登录')
                 })
             }
         }

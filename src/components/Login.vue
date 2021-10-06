@@ -33,14 +33,14 @@
 </template>
 
 <script>
-    import {request} from '../servies/request'
     import auth from '../servies/network/api.js'
+    import {mapGetters,mapMutations,mapActions} from 'vuex'
     export default {
         name: "Login",
         data() {
             return {
-                isShowRegister: true,
-                isShowLogin: false,
+                isShowRegister: false,
+                isShowLogin: true,
                 register: {
                     username: '',
                     password: '',
@@ -48,14 +48,18 @@
                     isError: false
                 },
                 login: {
-                    username: '',
-                    password: '',
+                    username: 'hange444',
+                    password: '123456',
                     notice: '请输入用户名和密码',
                     isError: false
                 }
             }
         },
         methods: {
+            ...mapActions([
+                'loginUser',
+                'registerUser'
+            ]),
             // 切换注册
             showRegister() {
                 this.isShowRegister = true
@@ -81,14 +85,10 @@
                     return
                 }
 
-                auth.register(this.register.username,this.register.password).then(res=>{
-                    if(res.msg === '创建成功'){
+                this.registerUser({username:this.register.username,password:this.register.password}).then(()=>{
                         this.register.iserror = false
                         this.register.notice = ''
-
                         this.$router.push({path:'/notebooks'})
-                    }
-                    console.log(res)
                 })
             },
             onLogin() {
@@ -104,15 +104,11 @@
                     this.login.isError = true
                     return
                 }
-                auth.login(this.login.username,this.login.password).then(res=>{
-                    if(res.msg === '登录成功'){
+                this.loginUser({username:this.login.username,password:this.login.password}).then(()=>{
                         this.login.iserror = false
                         this.login.notice = ''
-                        this.$eventBus.$emit('userInfo',this.login.username)
                         this.$router.push({path:'/notebooks'})
-                    }
 
-                    console.log(res)
                 })
             },
             validUsername(username) {

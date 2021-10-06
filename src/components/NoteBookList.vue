@@ -9,10 +9,11 @@
         <main>
             <div class="layout">
                 <h3>笔记本列表
-                    <span>({{notebookList.length}})</span>
+                    <span>({{notebooks.length}})</span>
                 </h3>
                 <div class="book-list">
-                    <router-link to="/note/1" class="notebook" v-for="(item,index) in notebookList" :key="index">
+                    <router-link class="notebook" v-for="(item,index) in notebooks" :key="index"
+                                 :to="`/note?notebookId=${item.id}`">
                         <div>
                             <span class="iconfont icon-notebook"></span>
                             {{item.title}}
@@ -30,51 +31,71 @@
 
 <script>
     import auth from '@/servies/network/api'
-    import notebooksList from '@/servies/network/notebooks'
+
+
+    import {mapActions, mapGetters, mapState} from 'vuex'
 
     export default {
         name: "NoteBookList",
         data() {
-            return {
-                notebookList: []
-            }
+            return {}
         },
         created() {
-            auth.getInfo().then(res => {
-                if (!res.isLogin) {
-                    this.$router.push({path: '/login'})
-                }
-            })
-            notebooksList.getAll().then(res => {
-                this.notebookList = res.data
-                console.log(res)
-            })
-            // notebooksList.addBook({title:'测试 不知道行不行'})
+           this.checkUser('/login')
+            this.$store.dispatch('getNotebooks')
+        },
+        computed: {
+            ...mapGetters(['notebooks'])
         },
         methods: {
+            ...mapActions(['addNotebook','deleteNotebook','updateNotebook','checkUser']),
             onCreate() {
-                let title = window.prompt('创建内容')
-                notebooksList.addBook({title}).then(res => {
-                    this.notebookList.unshift(res.data)
-                })
+                this.$prompt('标题', '新建笔记本', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    inputPattern: /^.{1,15}$/,
+                    inputErrorMessage: '标题字符不正确',
+                    closeOnClickModal: false,
+                }).then(({value}) => {
+                   this.addNotebook({title:value})
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消输入'
+                    });
+                });
             },
-            onDelete(item) {
-                let isConfirm = window.confirm('确定删除吗')
-                if (isConfirm) {
-                    notebooksList.deleteBook(item.id).then(res => {
-                        this.notebookList.splice(this.notebookList.indexOf(item), 1)
-                        alert('删除成功')
-                    })
+            async onDelete(item) {
+                let confirm = await this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).catch(err => err)
+                if (confirm !== 'confirm') {
+                    return this.$message.error('取消删除')
                 }
+                this.deleteNotebook({notebookId:item.id})
+                this.$message.success('删除成功')
             },
             onEdit(item) {
-                let title = window.prompt('修改标题', item.title)
-                notebooksList.updateBook(item.id, {title}).then(res => {
-                    console.log(item.title)
-                    item.title = title
-                    console.log(res)
-                })
-                console.log('编辑')
+                this.$prompt('请输入标题', '修改标题', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    inputPattern: /^.{1,15}$/,
+                    inputErrorMessage: '请输入1~15个字符',
+                    inputValue: item.title
+                }).then(({value}) => {
+                    this.updateNotebook({notebookId:item.id,title:value})
+                    // notebooksList.updateBook(item.id, {title: value}).then(res => {
+                    //     item.title = value
+                    // })
+                    this.$message.success('修改成功')
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消输入'
+                    });
+                });
             }
         }
     }

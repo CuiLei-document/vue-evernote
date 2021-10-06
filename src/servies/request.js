@@ -27,7 +27,7 @@ export function request(url,type ='GET',data ={}){
             }
         }).catch(err=>{
             console.error({msg:'获取数据失败'})
-            reject({msg:'网络获取失败'})
+            reject(err)
         })
     })
 }

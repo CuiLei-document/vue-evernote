@@ -4,7 +4,19 @@ import Login from "../components/Login";
 
 Vue.use(VueRouter)
 
+const originalReplace = VueRouter.prototype.replace;
+VueRouter.prototype.replace = function replace(location) {
+  return originalReplace.call(this, location).catch(err => err);
+};
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function replace(location) {
+  return originalPush.call(this, location).catch(err => err);
+};
 const routes = [
+  {
+    path:'/',
+    redirect:'/notebooks'
+  },
   {
     path:'/login',
     component:Login
@@ -14,17 +26,16 @@ const routes = [
     component: () => import('@/components/NoteBookList.vue')
   },
   {
-    path:'/note/:noteId',
+    path:'/note',
     component: () => import('@/components/NoteDetail.vue')
   },
   {
-    path:'/trash/:noteId',
+    path:'/trash',
     component: () => import('@/components/TrashDetail.vue')
   }
 ]
 
 const router = new VueRouter({
-  mode: 'history',
   base: process.env.BASE_URL,
   routes
 })
